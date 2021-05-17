@@ -73,14 +73,13 @@ ln -s /usr/share/apache-maven-3.8.1/bin/mvn /usr/bin/mvn
 # The release download URL looks like this: https://services.gradle.org/distributions/gradle-5.2.1-bin.zip
 # The release version is extracted from the download URL (i.e. 5.2.1).
 # After all of this, the release is downloaded, extracted, a symlink is created that points to it, and GRADLE_HOME is set.
-wget -qO gradleReleases.html https://gradle.org/releases/
-gradleLatestVersion=$(grep -oP "gradle-\K.*(?=-bin\.zip)" gradleReleases.html | sort -V | tail -n1)
-gradleUrl="https://services.gradle.org/distributions/gradle-"$gradleLatestVersion"-bin.zip"
-rm gradleReleases.html
+json=$(curl https://services.gradle.org/versions/all)
+latestVersion=$(echo $json | jq -r '.[] | select(.version | contains("-") | not).version' | sort -V | tail -n1)
+gradleUrl=$(echo $json | jq -r ".[] | select(.version==\"$latestVersion\") | .downloadUrl")
 wget -qO gradleLatest.zip $gradleUrl
 unzip -qq -d /usr/share gradleLatest.zip
 rm gradleLatest.zip
-ln -s /usr/share/gradle-"${gradleLatestVersion}"/bin/gradle /usr/bin/gradle
+ln -s /usr/share/gradle-"${latestVersion}"/bin/gradle /usr/bin/gradle
 echo "GRADLE_HOME=$(find /usr/share -depth -maxdepth 1 -name "gradle*")" | tee -a /etc/environment
 
 reloadEtcEnvironment
