@@ -29,31 +29,27 @@ function Test-VersionOutput {
 $archs = (Get-ToolsetContent).MsysPackages.mingw.arch
  foreach ($arch in $archs)
  {
-    if ($arch -eq "mingw-w64-x86_64")
-    {
-        $env:PATH = "C:\msys64\mingw64\bin;C:\msys32usr\bin;$origPath"
-    }
-    else
-    {
-        $env:PATH = "C:\msys64\mingw32\bin;C:\msys32usr\bin;$origPath"
-    }
-
-    $tools = (Get-ToolsetContent).MsysPackages.mingw.arch.name
 
     foreach ( $tool in $tools)
-    { 
-         $Executables = (Get-ToolsetContent).MsysPackages.mingw.arch.name.executable
+    {
+         Describe "$tool" {
+            Context "$tool"{
 
-         foreach ( $Executable in $Executables )  
+            $Executables = (Get-ToolsetContent).MsysPackages.mingw.arch.name.executable
 
-            $Executables = (Get-ToolsetContent).MsysPackages.mingw.arch.name.
+            foreach ( $Executable in $Executables )
+            {
+                if ($arch -eq "mingw-w64-i686-")
+                {
+                    $env:PATH = "C:\msys64\mingw32\bin;C:\msys32usr\bin;$origPath"
+                }
 
+                It "$Executable" -Testcases @{Executable=$Executable} {
+                    Test-VersionOutput -Executable $Executable | Should -ReturnZeroExitCode
+                }
 
-            Describe "$Executable" {
-            It "$Executable" -Testcases @{Executable=$Executable} {
-                Test-VersionOutput -Executable $Executable | Should -ReturnZeroExitCode
             }
-
-            }
+        }
+        }
     }
 }
