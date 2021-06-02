@@ -1,41 +1,53 @@
 function Test-VersionOutput {
     param (
         [Parameter(Mandatory)] [string] $Executable,
+        [switch] $Negate,
         [string] $CallParameter = "version", 
         [string] $Dash
     )
-    try {
-        $ChangeParam = $dash + $CallParameter
-        $fullCommand = "$Executable $ChangeParam"
-        $result = ShouldReturnZeroExitCode -ActualValue $fullCommand
-        if (-not $result.Succeeded)
-        {
-            throw
-        }
-        Write-Host "Tool '$Executable' installed"
-    }
-    catch {
+
+    $ChangeParam = $dash + $CallParameter
+    $fullCommand = "$Executable $ChangeParam"
+
+    [bool]$succeeded = $fullCommand.ExitCode -eq 0
+    if ($Negate) {
+        $succeeded = -not $succeeded
+    } 
+
+    if (-not $result.Succeeded)
+    {
         if ( $Dash.Length -eq 2  )
         {
             Write-Host "Tool '$Executable' not installed" 
             Exit 1
         }
         $Dash = $Dash + '-'
-        Test-VersionOutput -Executable $Executable -Dash $Dash 
+        Test-VersionOutput -Executable $Executable -Dash $Dash    
     }
-    return
+    Write-Host "Tool '$Executable' installed"
+
+    return [PSCustomObject] @{
+        Succeeded      = $succeeded
+        FailureMessage = $failureMessage
+    }
 }
 
-$archs = (Get-ToolsetContent).MsysPackages.mingw.arch
+$toolsetContent = (Get-ToolsetContent).MsysPackages
+$archs = $toolsetContent.mingw.arch
+
  foreach ($arch in $archs)
  {
+     Write-Host $arch 
+    Describe "$arch" {
 
-    foreach ( $tool in $tools)
-    {
-         Describe "$tool" {
+        $archPackages = $toolsetContent.mingw | Where-Object { $_.arch -eq $arch }
+        $tools = $archPackages.runtime_packages.name | ForEach-Object { "$_" }
+
+        foreach ( $tool in $tools){ 
             Context "$tool"{
 
-            $Executables = (Get-ToolsetContent).MsysPackages.mingw.arch.name.executable
+            $executablesList = $archPackages.runtime_packages | Where-Object { $_.name -eq $tool }
+            $executables = $executablesList.executables
 
             foreach ( $Executable in $Executables )
             {
@@ -44,7 +56,8 @@ $archs = (Get-ToolsetContent).MsysPackages.mingw.arch
                     $env:PATH = "C:\msys64\mingw32\bin;C:\msys32usr\bin;$origPath"
                 }
 
-                It "$Executable" -Testcases @{Executable=$Executable} {
+                It "$Executable" -Testcases @{Executable=$Executable}{
+
                     Test-VersionOutput -Executable $Executable | Should -ReturnZeroExitCode
                 }
 
