@@ -1,4 +1,11 @@
-function Test-VersionOutput {
+If (Get-Command -Name Add-ShouldOperator -ErrorAction SilentlyContinue) {
+    Add-ShouldOperator -Name ReturnZeroExitCode -InternalName ShouldReturnZeroExitCode -Test ${function:ShouldReturnZeroExitCode}
+    Add-ShouldOperator -Name MatchCommandOutput -InternalName ShouldMatchCommandOutput -Test ${function:ShouldMatchCommandOutput}
+    Add-ShouldOperator -Name TestVersionOutput -InternalName ShouldTestVersionOutput -Test ${function:ShouldTestVersionOutput}
+}
+
+
+function ShouldTestVersionOutput {
     param (
         [Parameter(Mandatory)] [string] $Executable,
         [switch] $Negate,
@@ -18,8 +25,7 @@ function Test-VersionOutput {
     {
         if ( $Dash.Length -eq 2  )
         {
-            Write-Host "Tool '$Executable' not installed" 
-            Exit 1
+            $failureMessage = "Tool '$Executable' not installed" 
         }
         $Dash = $Dash + '-'
         Test-VersionOutput -Executable $Executable -Dash $Dash    
@@ -58,7 +64,7 @@ $archs = $toolsetContent.mingw.arch
 
                 It "$Executable" -Testcases @{Executable=$Executable}{
 
-                    Test-VersionOutput -Executable $Executable | Should -ReturnZeroExitCode
+                    ShouldTestVersionOutput -Executable $Executable | Should -ReturnZeroExitCode
                 }
 
             }
