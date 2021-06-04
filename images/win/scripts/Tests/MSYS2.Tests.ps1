@@ -13,27 +13,29 @@ function ShouldTestVersionOutput {
 
     $ChangeParam = $dash + $CallParameter
     $fullCommand = "$Executable $ChangeParam"
-    $fullCommand
-    [bool]$succeeded = ShouldReturnZeroExitCode -ActualValue $fullCommand
-    $succeeded
-    
+
+    $succeeded = (ShouldReturnZeroExitCode -ActualValue $fullCommand).Succeeded
+
     if ($Negate) {
         $succeeded = -not $succeeded
     } 
-
-    if (-not $succeeded)
+    if ( $succeeded -ne  "true" )
     {
-        if ( $Dash.Length -eq 2  )
+        if ( $Dash.Length -le "1" )
         {
-            $failureMessage = "Tool '$Executable' not installed" 
+            $Dash = $Dash + '-'
+            ShouldTestVersionOutput -Executable $Executable -Dash $Dash
+            exit
         }
-        $Dash = $Dash + '-'
-        ShouldTestVersionOutput -Executable $Executable -Dash $Dash
+        $failureMessage = "Tool '$Executable' not installed "
     }
 
-    Write-Host "Tool '$Executable' installed"
+    if ( $succeeded.succeeded -eq  "true" )
+    {
+        $failureMessage = "Tool '$Executable' installed "
+    }
 
-    return [PSCustomObject] @{
+    return @{
         Succeeded      = $succeeded
         FailureMessage = $failureMessage
     }
