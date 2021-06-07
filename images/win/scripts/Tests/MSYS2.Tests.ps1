@@ -2,35 +2,28 @@ $origPath = $env:PATH
 $toolsetContent = (Get-ToolsetContent).MsysPackages
 $archs = $toolsetContent.mingw.arch
 
-function CallExecutable {
+function Test-Executables {
     param (
         [Parameter(Mandatory)] [string] $Executable,
         [switch] $Negate,
         [string] $CallParameter = "version", 
-        [string] $Dash
+        [string] $DelimiterCharacter
     )
-
-    $ChangeParam = $dash + $CallParameter
-    $fullCommand = "$Executable $ChangeParam"
-
-    [bool]$succeeded = (ShouldReturnZeroExitCode -ActualValue $fullCommand).Succeeded
-
-    if ($Negate) { $succeeded = -not $succeeded }
-
-    if ( -not $succeeded)
+    while ($DelimiterCharacter.Length -le 2)
     {
-        if ( $Dash.Length -le "1" )
+        $ChangeParam = $DelimiterCharacter + $CallParameter
+        $fullCommand = "$Executable $ChangeParam"
+        [bool]$succeeded = (ShouldReturnZeroExitCode -ActualValue $fullCommand).Succeeded
+        if ($succeeded) 
         {
-            $Dash = $Dash + '-'
-            CallExecutable -Executable $Executable -Dash $Dash
-            return
+            break
         }
+        $DelimiterCharacter = $DelimiterCharacter + '-'
+    }
+    if (-not $succeeded)
+    {
         $failureMessage = "Tool '$Executable' not installed "
     }
-    else {
-        $failureMessage = "Tool '$Executable' installed "
-    }
-
     return [PSCustomObject] @{
         Succeeded      = $succeeded
         FailureMessage = $failureMessage
@@ -63,7 +56,7 @@ foreach ($arch in $archs)
             foreach ( $Executable in $Executables )
             {
                 It "$Executable" -Testcases @{Executable=$Executable}{
-                    CallExecutable -Executable $Executable | Should -BeTrue 
+                    Test-Executables -Executable $Executable | Should -BeTrue 
                 }
             }
             }
@@ -81,3 +74,6 @@ Describe "MSYS2" {
         Join-Path $msys2BinDir $ToolName | Should -Exist
     }
 }
+
+
+
