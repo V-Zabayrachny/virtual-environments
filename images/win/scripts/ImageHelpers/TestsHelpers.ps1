@@ -131,5 +131,5 @@ function ShouldMatchCommandOutput {
 If (Get-Command -Name Add-ShouldOperator -ErrorAction SilentlyContinue) {
     Add-ShouldOperator -Name ReturnZeroExitCode -InternalName ShouldReturnZeroExitCode -Test ${function:ShouldReturnZeroExitCode}
     Add-ShouldOperator -Name MatchCommandOutput -InternalName ShouldMatchCommandOutput -Test ${function:ShouldMatchCommandOutput}
-    Add-ShouldOperator -Name TestVersionOutput -InternalName Test-Executables -Test ${function:Test-Executables}
+    Add-ShouldOperator -Name TestExecutable -InternalName ShouldTestExecutable -Test ${function:ShouldTestExecutable}
 }

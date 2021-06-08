@@ -2,7 +2,7 @@ $origPath = $env:PATH
 $toolsetContent = (Get-ToolsetContent).MsysPackages
 $archs = $toolsetContent.mingw.arch
 
-function Test-Executables {
+function ShouldTestExecutable {
     param (
         [Parameter(Mandatory)] [string] $Executable,
         [switch] $Negate,
@@ -62,7 +62,7 @@ foreach ($arch in $archs)
             foreach ( $Executable in $Executables )
             {
                 It "$Executable" -Testcases @{Executable=$Executable}{
-                    Test-Executables -Executable $Executable | Should -BeTrue
+                    "$Executable" | Should -TestExecutable
                 }
             }
             }
