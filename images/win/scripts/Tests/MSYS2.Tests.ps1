@@ -6,24 +6,30 @@ function Test-Executables {
     param (
         [Parameter(Mandatory)] [string] $Executable,
         [switch] $Negate,
-        [string] $CallParameter = "version", 
+        [string] $CallParameter = "version",
         [string] $DelimiterCharacter
     )
+
     while ($DelimiterCharacter.Length -le 2)
     {
         $ChangeParam = $DelimiterCharacter + $CallParameter
         $fullCommand = "$Executable $ChangeParam"
         [bool]$succeeded = (ShouldReturnZeroExitCode -ActualValue $fullCommand).Succeeded
-        if ($succeeded) 
+        
+        if ($succeeded)
         {
             break
         }
+        
         $DelimiterCharacter = $DelimiterCharacter + '-'
+    
     }
+
     if (-not $succeeded)
     {
         $failureMessage = "Tool '$Executable' not installed "
     }
+
     return [PSCustomObject] @{
         Succeeded      = $succeeded
         FailureMessage = $failureMessage
@@ -56,13 +62,13 @@ foreach ($arch in $archs)
             foreach ( $Executable in $Executables )
             {
                 It "$Executable" -Testcases @{Executable=$Executable}{
-                    Test-Executables -Executable $Executable | Should -BeTrue 
+                    Test-Executables -Executable $Executable | Should -BeTrue
                 }
             }
             }
         
         }
- }
+    }
 }
 
 Describe "MSYS2" {
@@ -74,6 +80,3 @@ Describe "MSYS2" {
         Join-Path $msys2BinDir $ToolName | Should -Exist
     }
 }
-
-
-
