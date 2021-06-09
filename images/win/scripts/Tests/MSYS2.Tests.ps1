@@ -6,7 +6,7 @@ function ShouldTestExecutable {
     param (
         [Parameter(Mandatory)] [string] $ActualValue,
         [switch] $Negate,
-        [string] $CallParameter = "version",
+        [string] $CallParameter,
         [string] $CallerSessionState
     )
 
@@ -20,9 +20,7 @@ function ShouldTestExecutable {
         {
             break
         }
-        
         $Dash = $Dash + '-'
-    
     }
 
     if (-not $succeeded)
@@ -46,7 +44,7 @@ foreach ($arch in $archs)
         }
         else
         {
-            $env:PATH = "C:\msys64\mingw64\bin;C:\msys32usr\bin;$origPath"
+            $env:PATH = "C:\msys64\usr\bin;C:\msys32usr\bin;$origPath"
         }
 
         $archPackages = $toolsetContent.mingw | Where-Object { $_.arch -eq $arch }
@@ -62,7 +60,7 @@ foreach ($arch in $archs)
             foreach ( $Executable in $Executables )
             {
                 It "$Executable" -Testcases @{Executable=$Executable}{
-                    "$Executable" | Should -TestExecutable
+                    "$Executable" | Should -TestExecutable -CallParameter "version"
                 }
             }
             }
@@ -71,12 +69,14 @@ foreach ($arch in $archs)
     }
 }
 
+$env:PATH = "C:\msys64\usr\bin;C:\msys32usr\bin;$origPath"
+
 Describe "MSYS2" {
     It "<ToolName>" -TestCases @(
         @{ ToolName = "bash.exe" }
         @{ ToolName = "tar.exe" }
         @{ ToolName = "make.exe" }
     ) {
-        Join-Path $msys2BinDir $ToolName | Should -Exist
+        "$ToolName" | Should -TestExecutable -CallParameter "version"
     }
 }
