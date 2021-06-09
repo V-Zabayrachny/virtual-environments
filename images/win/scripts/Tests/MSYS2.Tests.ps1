@@ -35,6 +35,23 @@ function ShouldTestExecutable {
     }
 }
 
+$env:PATH = "C:\msys64\usr\bin;C:\msys32usr\bin;$origPath"
+
+Describe "MSYS2" {
+   
+    It "msys2Dir" {
+        $msys2Dir | Should -Exist
+    }
+    
+    It "<ToolName>" -TestCases @(
+        @{ ToolName = "bash.exe" }
+        @{ ToolName = "tar.exe" }
+        @{ ToolName = "make.exe" }
+    ) {
+        "$ToolName" | Should -TestExecutable -CallParameter "version"
+    }
+}
+
 foreach ($arch in $archs)
 { 
     Describe "$arch" {
@@ -67,22 +84,5 @@ foreach ($arch in $archs)
             }
         
         }
-    }
-}
-
-$env:PATH = "C:\msys64\usr\bin;C:\msys32usr\bin;$origPath"
-
-Describe "MSYS2" {
-   
-    It "msys2Dir" {
-        $msys2Dir | Should -Exist
-    }
-    
-    It "<ToolName>" -TestCases @(
-        @{ ToolName = "bash.exe" }
-        @{ ToolName = "tar.exe" }
-        @{ ToolName = "make.exe" }
-    ) {
-        "$ToolName" | Should -TestExecutable -CallParameter "version"
     }
 }
