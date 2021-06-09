@@ -4,16 +4,16 @@ $archs = $toolsetContent.mingw.arch
 
 function ShouldTestExecutable {
     param (
-        [Parameter(Mandatory)] [string] $Executable,
+        [Parameter(Mandatory)] [string] $ActualValue,
         [switch] $Negate,
         [string] $CallParameter = "version",
-        [string] $DelimiterCharacter
+        [string] $CallerSessionState
     )
 
-    while ($DelimiterCharacter.Length -le 2)
+    while ($Dash.Length -le 2)
     {
-        $ChangeParam = $DelimiterCharacter + $CallParameter
-        $fullCommand = "$Executable $ChangeParam"
+        $ChangeParam = $Dash + $CallParameter
+        $fullCommand = "$ActualValue $ChangeParam"
         [bool]$succeeded = (ShouldReturnZeroExitCode -ActualValue $fullCommand).Succeeded
         
         if ($succeeded)
@@ -21,13 +21,13 @@ function ShouldTestExecutable {
             break
         }
         
-        $DelimiterCharacter = $DelimiterCharacter + '-'
+        $Dash = $Dash + '-'
     
     }
 
     if (-not $succeeded)
     {
-        $failureMessage = "Tool '$Executable' not installed "
+        $failureMessage = "Tool '$ActualValue' not installed "
     }
 
     return [PSCustomObject] @{
