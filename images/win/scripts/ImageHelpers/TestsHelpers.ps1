@@ -128,6 +128,40 @@ function ShouldMatchCommandOutput {
     }
 }
 
+function ShouldTestExecutable {
+    param (
+        [Parameter(Mandatory)] [string] $ActualValue,
+        [switch] $Negate,
+        [string] $CallParameter = "version",
+        [string] $CallerSessionState
+    )
+
+    $DelimiterCharacter = ""
+
+    while ($DelimiterCharacter.Length -le 2)
+    {
+        $ChangeParam = $DelimiterCharacter + $CallParameter
+        $fullCommand = "$ActualValue $ChangeParam"
+        [bool]$succeeded = (ShouldReturnZeroExitCode -ActualValue $fullCommand).Succeeded
+        
+        if ($succeeded)
+        {
+            break
+        }
+        $DelimiterCharacter = $DelimiterCharacter + '-'
+    }
+
+    if (-not $succeeded)
+    {
+        $failureMessage = "Tool '$ActualValue' not installed "
+    }
+
+    return [PSCustomObject] @{
+        Succeeded      = $succeeded
+        FailureMessage = $failureMessage
+    }
+}
+
 If (Get-Command -Name Add-ShouldOperator -ErrorAction SilentlyContinue) {
     Add-ShouldOperator -Name ReturnZeroExitCode -InternalName ShouldReturnZeroExitCode -Test ${function:ShouldReturnZeroExitCode}
     Add-ShouldOperator -Name MatchCommandOutput -InternalName ShouldMatchCommandOutput -Test ${function:ShouldMatchCommandOutput}
