@@ -22,7 +22,7 @@ Describe "MSYS2" {
     It "call <ToolName>" -TestCases $TestCases {
         (get-command "$ToolName").Source | Should -BeLike "$msys2Dir*"
     }
-    
+
     It "way <ToolName>" -TestCases $TestCases {
         "$ToolName" | Should -TestExecutable
     }
