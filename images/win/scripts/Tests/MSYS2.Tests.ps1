@@ -31,7 +31,7 @@ Describe "MSYS2" {
 foreach ($arch in $archs){
     Describe "$arch" {
         
-        if ($arch -eq "mingw-w64-i686-")
+        if ($arch -eq "mingw-w64-i686")
         {
             $env:PATH = "C:\msys64\mingw32\bin;C:\msys32usr\bin;$origPath"
         }
