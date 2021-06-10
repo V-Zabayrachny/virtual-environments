@@ -37,7 +37,7 @@ foreach ($arch in $archs){
         }
         else
         {
-            $env:PATH = "C:\msys64\usr\bin;C:\msys32usr\bin;$origPath"
+            $env:PATH = "C:\msys64\mingw64\bin;C:\msys32usr\bin;$origPath"
         }
 
         $archPackages = $toolsetContent.mingw | Where-Object { $_.arch -eq $arch }
