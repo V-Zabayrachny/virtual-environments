@@ -13,13 +13,18 @@ Describe "MSYS2" {
     }
 
     $env:PATH = "C:\msys64\usr\bin;C:\msys32usr\bin;$origPath"
-
-    It "<ToolName>" -TestCases @(
+    $TestCases = @(
         @{ ToolName = "bash.exe" }
         @{ ToolName = "tar.exe" }
         @{ ToolName = "make.exe" }
-    ) {
+    )
+
+    It "call <ToolName>" -TestCases $TestCases {
         "$ToolName" | Should -TestExecutable
+    }
+    
+    It "way <ToolName>" -TestCases $TestCases {
+    (get-command "$ToolName").Source | Should -BeLike "$msys2Dir*"
     }
 }
 
