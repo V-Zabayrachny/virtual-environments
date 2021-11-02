@@ -11,13 +11,9 @@ $ArgumentList = ("/install", "/quiet", "/norestart")
 Install-Binary -Url $InstallerURI -Name $InstallerName -ArgumentList $ArgumentList
 
 ## Downloading mysql
-if (Test-IsWin22) {
-    $MysqlVersionName = "mysql-8.0.26-winx64"
-    $MysqlVersionUrl = "https://dev.mysql.com/get/Downloads/MySQL-8/${MysqlVersionName}.zip"
-} else {
-    $MysqlVersionName = "mysql-5.7.35-winx64"
-    $MysqlVersionUrl = "https://dev.mysql.com/get/Downloads/MySQL-5.7/${MysqlVersionName}.zip"
-}
+$MysqlShortVersionName = "(Get-ToolsetContent).Mysql.short_version"
+$MysqlFullVersionName = "(Get-ToolsetContent).Mysql.full_version"
+$MysqlVersionUrl = "https://dev.mysql.com/get/Downloads/MySQL-${MysqlShortVersionName}/${MysqlFullVersionName}.zip"
 
 $MysqlArchPath = Start-DownloadWithRetry -Url $MysqlVersionUrl -Name "mysql.zip"
 
