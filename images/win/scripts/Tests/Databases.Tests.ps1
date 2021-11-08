@@ -53,7 +53,7 @@ Describe "PostgreSQL" {
 }
 
 Describe "MySQL" {
-    It "MySQL version should correspond to the version in the toolse" {
+    It "MySQL version should correspond to the version in the toolset" {
         mysql --version | Should -BeLike "*$((Get-ToolsetContent).Mysql.full_version)*"
     }
 }
