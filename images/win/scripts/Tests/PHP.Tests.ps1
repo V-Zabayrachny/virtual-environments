@@ -1,12 +1,12 @@
 Describe "PHP" {
-    It "Check version PHP" {
-        $phpMajorMinor = "(Get-ToolsetContent).php.version"
+    It "Check PHP version" {
+        $phpMajorMinor = (Get-ToolsetContent).php.version
         "php --version" | Should -BeLike "*${phpMajorMinor}*"
     }
 
-    It "Check version Composer" {
-        $composerMajorMinor = "(Get-ToolsetContent).composer.version"
-        "composer --version" | Should -BeLike "*${composerMajorMinor}*"
+    It "Check Composer version" {
+        $composerMajor = (Get-ToolsetContent).composer.version
+        "composer --version" | Should -BeLike "*${composerMajor}*"
     }
 
     It "PHP Environment variables is set." {
