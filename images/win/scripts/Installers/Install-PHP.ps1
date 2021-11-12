@@ -5,10 +5,14 @@
 
 # Install latest PHP in chocolatey
 $installDir = "c:\tools\php"
-Choco-Install -PackageName php -ArgumentList "--force", "--params", "/InstallDir:$installDir"
+$phpMajorMinor = "(Get-ToolsetContent).php.version"
+$phpVersionToInstall = Get-LatestChocoPackageVersion -TargetVersion $phpMajorMinor -PackageName "php"
+Choco-Install -PackageName php -ArgumentList "--force", "--params", "/InstallDir:$installDir", "--version $phpVersionToInstall"
 
 # Install latest Composer in chocolatey
-Choco-Install -PackageName composer -ArgumentList "--ia", "/DEV=$installDir /PHP=$installDir"
+$composerMajorMinor = "(Get-ToolsetContent).composer.version"
+$composerVersionToInstall = Get-LatestChocoPackageVersion -TargetVersion $composerMajorMinor -PackageName "php"
+Choco-Install -PackageName composer -ArgumentList "--ia", "/DEV=$installDir /PHP=$installDir", "--version $composerVersionToInstall"
 
 # update path to extensions and enable curl and mbstring extensions, and enable php openssl extensions.
 ((Get-Content -path $installDir\php.ini -Raw) -replace ';extension=curl','extension=curl' -replace ';extension=mbstring','extension=mbstring' -replace ';extension_dir = "ext"','extension_dir = "ext"' -replace ';extension=openssl','extension=openssl') | Set-Content -Path $installDir\php.ini
