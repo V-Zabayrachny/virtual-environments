@@ -4,9 +4,8 @@ Describe "PHP" {
         "php --version" | Should -BeLike "*${phpMajorMinor}*"
     }
 
-    It "Check Composer version" {
-        $composerMajor = (Get-ToolsetContent).composer.version
-        "composer --version" | Should -BeLike "*${composerMajor}*"
+    It "Check Composer in the PATH" {
+        "composer --version" | Should -ReturnZeroExitCode
     }
 
     It "PHP Environment variables is set." {

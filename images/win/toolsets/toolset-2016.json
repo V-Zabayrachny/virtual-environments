@@ -430,8 +430,5 @@
     },
     "php": {
         "version": "8.0"
-    },
-    "composer": {
-        "version": "6"
     }
 }
