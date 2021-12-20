@@ -15,4 +15,10 @@ steps:
 - pwsh: |
     cargo --version
     rustdoc --version
-    rustfmt --version
+    $version = [regex]::matches($(rustdoc --version), "\d+\.\d+\.\d+").Value
+    echo $version
+    $version = [regex]::matches($(cargo --version), "\d+\.\d+\.\d+").Value
+    echo $version
+    $rustVersion = [regex]::matches($(rustc --version), "\d+\.\d+\.\d+").Value
+    echo $rustVersion
+    
