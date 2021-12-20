@@ -19,7 +19,7 @@ steps:
     echo "Cargo $version"
     $rustVersion = [regex]::matches($(rustc --version), "\d+\.\d+\.\d+").Value
     echo "Rust $version"
-    echo $(bindgen --version)
+    echo $(cbindgen --version)
     echo $(cargo audit --version)
     echo $(cargo outdated --version)
     $version = [regex]::matches($(cargo clippy  --version), "\d+\.\d+\.\d+").Value
