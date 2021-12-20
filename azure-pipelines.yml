@@ -13,12 +13,23 @@ pool:
 
 steps:
 - pwsh: |
-    cargo --version
-    rustdoc --version
     $version = [regex]::matches($(rustdoc --version), "\d+\.\d+\.\d+").Value
-    echo $version
+    echo "Rustdoc $version"
     $version = [regex]::matches($(cargo --version), "\d+\.\d+\.\d+").Value
-    echo $version
+    echo "Cargo $version"
     $rustVersion = [regex]::matches($(rustc --version), "\d+\.\d+\.\d+").Value
-    echo $rustVersion
-    
+    echo "Rustup $version"
+    "Rust $version"
+
+    echo $(Get-BindgenVersion)
+    echo $(Get-CargoAuditVersion)
+    echo $(Get-CargoOutdatedVersion)
+    echo $(Get-CbindgenVersion)
+    echo "Rustfmt $(Get-RustfmtVersion)"
+    echo "Clippy $(Get-RustClippyVersion)"
+
+    echo "Rust $(Get-RustVersion)"
+    echo "Rustup $(Get-RustupVersion)"
+    echo "Cargo $(Get-RustCargoVersion)"
+    echo "Rustdoc $(Get-RustdocVersion)"
+
