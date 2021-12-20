@@ -18,18 +18,14 @@ steps:
     $version = [regex]::matches($(cargo --version), "\d+\.\d+\.\d+").Value
     echo "Cargo $version"
     $rustVersion = [regex]::matches($(rustc --version), "\d+\.\d+\.\d+").Value
-    echo "Rustup $version"
-    "Rust $version"
+    echo "Rust $version"
 
-    echo $(Get-BindgenVersion)
-    echo $(Get-CargoAuditVersion)
-    echo $(Get-CargoOutdatedVersion)
-    echo $(Get-CbindgenVersion)
-    echo "Rustfmt $(Get-RustfmtVersion)"
-    echo "Clippy $(Get-RustClippyVersion)"
+    echo $(return cargo audit --version)
+    echo $(cargo outdated --version)
+    echo $(bindgen --version)
 
-    echo "Rust $(Get-RustVersion)"
-    echo "Rustup $(Get-RustupVersion)"
-    echo "Cargo $(Get-RustCargoVersion)"
-    echo "Rustdoc $(Get-RustdocVersion)"
+    $version = [regex]::matches($(cargo clippy  --version), "\d+\.\d+\.\d+").Value
+    echo "clippy $version"
 
+    $version = [regex]::matches($(rustfmt --version), "\d+\.\d+\.\d+").Value
+    echo "Rustfmt $version"
